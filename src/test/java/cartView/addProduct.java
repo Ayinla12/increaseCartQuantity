@@ -20,6 +20,7 @@ import java.time.Duration;
 
 public class addProduct {
     WebDriver driver;
+    WebDriverWait wait;
     int targetQuantity;
 
     @BeforeClass
@@ -28,13 +29,20 @@ public class addProduct {
         driver = new ChromeDriver();
         driver.manage().window().maximize();
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
     }
 
     @Test(priority = 1)
     public void launchHomepage() {
         //Section: opens homepage & verify it loaded correctly
         driver.get("https://automationexercise.com/");
-        driver.findElement(By.xpath("//button[@aria-label='Consent']")).click();
+        try {
+            WebElement consentButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//button[@aria-label='Consent']")));
+            consentButton.click();
+        } catch (Exception e) {
+            System.out.println("Consent button not displayed");
+        }
+
         String pageTitle = driver.getTitle();
         Assert.assertEquals(pageTitle, "Automation Exercise");
     }
